@@ -1,0 +1,60 @@
+Primary Radius (0-450): <input type="range" id="primary_radius" min="0" max="450" value="350" onchange="DrawOrbits()">
+<br>
+Secondary Radius (0-250): <input type="range" id="secondary_radius" min="0" max="250" value="50" onchange="DrawOrbits()">
+<br>
+Secondary Multiplier (1-50): <input type="range" id="secondary_multiplier" min="1" max="50" value="12" onchange="DrawOrbits()">
+<br>
+
+
+<canvas id="myCanvas" width="900" height="900" style="border:1px solid #d3d3d3;">
+
+
+<script type="text/javascript">
+	function Rec(theta,radius){
+		var x=Math.cos(theta)*radius;
+		var y=Math.sin(theta)*radius;
+		return {"x":x,"y":y}
+	}
+
+var canvas = document.getElementById("myCanvas");
+var center_x=canvas.width/2;
+var center_y=canvas.height/2;
+var ctx = canvas.getContext("2d");
+
+	function DrawOrbits(){
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.beginPath();
+		var primary_radius = document.getElementById("primary_radius").value;
+		var primary_multiplier=1;
+		var secondary_radius=document.getElementById("secondary_radius").value;
+		var secondary_multiplier=document.getElementById("secondary_multiplier").value;
+		var primary_coords;
+		var secondary_coords;
+
+		var render_steps=256;
+		var theta_step=2*Math.PI/render_steps;
+
+		for (var theta=0; theta<=2*Math.PI; theta+=theta_step) {
+			primary_coords=Rec((theta+(theta_step/2))*primary_multiplier,primary_radius);
+			ctx.moveTo(center_x+primary_coords["x"],center_y+primary_coords["y"]);
+
+			primary_coords=Rec(theta*primary_multiplier,primary_radius);
+			ctx.lineTo(center_x+primary_coords["x"],center_y+primary_coords["y"]);
+		}
+		ctx.stroke();
+
+		var render_steps=1024;
+		var theta_step=2*Math.PI/render_steps;
+
+		for (var theta=0; theta<=2*Math.PI; theta+=theta_step) {
+			primary_coords=Rec(theta*primary_multiplier,primary_radius);
+			secondary_coords=Rec(theta*secondary_multiplier,secondary_radius);
+			if (theta==0) {
+				ctx.moveTo(center_x+primary_coords["x"]+secondary_coords["x"],center_y+primary_coords["y"]+secondary_coords["y"]);
+			}
+			ctx.lineTo(center_x+primary_coords["x"]+secondary_coords["x"],center_y+primary_coords["y"]+secondary_coords["y"]);
+		}
+		ctx.stroke();
+	}
+	DrawOrbits();
+</script>

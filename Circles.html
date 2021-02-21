@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>CIRCLE</title>
+		<style>
+			*{
+				overflow: hidden;
+				margin: 0px;
+				padding: 0px;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+		<script>
+		var canvas = document.getElementById("canvas");
+		canvas.width = 1200;
+		canvas.height = 800;
+		canvas.style.border = "1px solid #000";
+		var ctx = canvas.getContext("2d");
+		ctx.lineWidth = 2;
+
+		var circles = [];
+		function overlapping(c1, c2){
+			var dx = c2[0] - c1[0];
+			var dy = c2[1] - c1[1];
+			return Math.sqrt(dx * dx + dy * dy) < c1[2] + c2[2];
+		}
+
+		var maxr = Math.floor(Math.min(canvas.width, canvas.height) / 2);
+
+		var area = 0;
+		for(var r = maxr; r > 0; r--){
+			for(var x = r-1; x < canvas.width-r+1; x++){
+				for(var y =r-1 ; y < canvas.height-r+1; y++){
+					var o = false;
+					if(x - r < 0 || x + r > canvas.width || y - r < 0 || y + r > canvas.height){
+						o = true;
+					}
+					if(!o){
+						for(var i = 0; i < circles.length; i++){
+							if(overlapping(circles[i], [x, y, r])){
+								o = true;
+								break;
+							}
+						}
+					}
+					if(!o){
+						circles.push([x, y, r]);
+						ctx.beginPath();
+						ctx.arc(circles[i][0], circles[i][1], circles[i][2], 0, 2 * Math.PI);
+						ctx.stroke();
+
+						area += Math.PI * r * r;
+
+						console.log(circles.length, area, canvas.width * canvas.height);
+					}
+				}
+			}
+		}
+
+		</script>
+	</body>
+</html>
